@@ -16,6 +16,8 @@
 	}
   ],
   "autoload": {
-	"Myth\\Bay\\": "src"
+	"psr-4": {
+	  "Myth\\Bay\\": "src"
+	}
   }
 }
