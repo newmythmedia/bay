@@ -7,14 +7,14 @@ php:
   - 7
   - hhvm
 
- matrix:
+matrix:
   allow_failures:
-    - php: 7
     - php: hhvm
+    - php: 7
   fast-finish: true
 
- before_script:
-  # Get Composer up and running
+before_script:
+  # Get Composer Up and Running
   - travis_retry composer self-update
-  - travis_retry composer install --perfer-dist --no-interaction --dev
-  - travis_retry composer dump-autoload
+  - travis_retry composer install --prefer-source --no-interaction --dev
+  - travis_retry composer dump-autoload -o
