@@ -1,0 +1,21 @@
+{
+  "name": "myth/bay",
+  "type": "library",
+  "description": "Provides a simple mechanism for inserting view partials rendered in other classes. Can be used to provide a 'widgets' implementation or similar.",
+  "keywords": [
+	"view",
+	"component",
+	"cell"
+  ],
+  "homepage": "https://github.com/newmythmedia/bay",
+  "license": "MIT",
+  "authors": [
+	{
+	  "name": "Lonnie Ezell",
+	  "homepage": "http://newmythmedia.com"
+	}
+  ],
+  "autoload": {
+	"Myth\\Bay\\": "src"
+  }
+}
