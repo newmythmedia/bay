@@ -14,14 +14,26 @@ class Bay {
 	 */
 	protected $finder = null;
 
+	/**
+	 * Instance of our cache access library.
+	 *
+	 * @var CacheInterface|null
+	 */
+	protected $cache = null;
+
 	//--------------------------------------------------------------------
 
-	public function __construct(LibraryFinderInterface $finder=null)
+	public function __construct(LibraryFinderInterface $finder=null, CacheInterface $cache=null)
 	{
 	    if (is_object($finder))
 	    {
 		    $this->finder = $finder;
 	    }
+
+		if (is_object($cache))
+		{
+			$this->cache = $cache;
+		}
 	}
 
 	//--------------------------------------------------------------------
@@ -33,13 +45,24 @@ class Bay {
 	 *
 	 * @param string        $library
 	 * @param string|array  $params
+	 * @param string        $cache_name
+	 * @param int           $cache_ttl      // Time in _minutes_
 	 *
 	 * @return null|string
 	 */
-	public function display($library, $params=null)
+	public function display($library, $params=null, $cache_name=null, $cache_ttl=0)
 	{
 		list($class, $method) = $this->determineClass($library);
 
+		// Is it cached?
+		$cache_name = ! empty($cache_name) ? $cache_name : $class . $method . md5(serialize($params));
+
+		if (! empty($this->cache) && $output = $this->cache->get($cache_name))
+		{
+			return $output;
+		}
+
+		// Not cached - so grab it...
 		$instance = new $class();
 
 		if (! method_exists($instance, $method))
@@ -49,10 +72,20 @@ class Bay {
 
 		if ($this->isStaticMethod($instance, $method))
 		{
-			return $instance::{$method}( $this->prepareParams($params) );
+			$output = $instance::{$method}( $this->prepareParams($params) );
+		}
+		else
+		{
+			$output = $instance->{$method}($this->prepareParams($params));
 		}
 
-		return $instance->{$method}( $this->prepareParams($params) );
+		// Can we cache it?
+		if (! empty($this->cache))
+		{
+			$this->cache->set($cache_name, $output, $cache_ttl);
+		}
+
+		return $output;
 	}
 
 	//--------------------------------------------------------------------
