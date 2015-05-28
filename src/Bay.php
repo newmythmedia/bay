@@ -16,7 +16,7 @@ class Bay {
 
 	//--------------------------------------------------------------------
 
-	public function __construct(LibraryFinderInterface $finder=null)
+	public function __construct(LibraryFinderInterface $finder = null)
 	{
 	    if (is_object($finder))
 	    {
@@ -36,23 +36,23 @@ class Bay {
 	 *
 	 * @return null|string
 	 */
-	public function display($library, $params=null)
+	public function display($library, $params = null)
 	{
 		list($class, $method) = $this->determineClass($library);
 
 		$instance = new $class();
 
-		if (! method_exists($instance, $method))
+		if (!method_exists($instance, $method))
 		{
 			throw new \InvalidArgumentException("{$class}::{$method} is not a valid method.");
 		}
 
 		if ($this->isStaticMethod($instance, $method))
 		{
-			return $instance::{$method}( $this->prepareParams($params) );
+			return $instance::{$method}($this->prepareParams($params));
 		}
 
-		return $instance->{$method}( $this->prepareParams($params) );
+		return $instance->{$method}($this->prepareParams($params));
 	}
 
 	//--------------------------------------------------------------------
@@ -87,10 +87,10 @@ class Bay {
 			throw new \InvalidArgumentException('No class provided to Bay::display().');
 		}
 
-		if (! class_exists($class, true))
+		if (!class_exists($class, true))
 		{
 			// Try the Finder to see if it can find it...
-			if (! is_null($this->finder))
+			if (!is_null($this->finder))
 			{
 				if ($this->finder->find($class))
 				{
@@ -103,9 +103,9 @@ class Bay {
 			$found = true;
 		}
 
-		if (! $found)
+		if (!$found)
 		{
-			throw new \InvalidArgumentException('Unable to locate class '. $class .', provided to Bay::display().');
+			throw new \InvalidArgumentException('Unable to locate class '.$class.', provided to Bay::display().');
 		}
 
 		if (empty($method))
@@ -113,7 +113,7 @@ class Bay {
 			$method = 'index';
 		}
 
-		return [$class, $method];
+		return [ $class, $method ];
 	}
 
 	//--------------------------------------------------------------------
@@ -128,7 +128,7 @@ class Bay {
 	 */
 	public function prepareParams($params)
 	{
-		if (! is_string($params) && ! is_array($params))
+		if (!is_string($params) && !is_array($params))
 		{
 			return null;
 		}
@@ -140,7 +140,7 @@ class Bay {
 			    return null;
 		    }
 
-		    $new_params = [];
+		    $new_params = [ ];
 
 		    $separator = ' ';
 		    if (strpos($params, ',') !== false)
@@ -162,7 +162,7 @@ class Bay {
 		    unset($new_params);
 	    }
 
-		if (is_array($params) && ! count($params))
+		if (is_array($params) && !count($params))
 		{
 			return null;
 		}
