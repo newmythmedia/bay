@@ -22,7 +22,7 @@ class CI3Cache implements CacheInterface {
 	 * the view.
 	 *
 	 * @param $key
-	 * @return string|null
+	 * @return string|false
 	 */
 	public function get($key)
 	{
