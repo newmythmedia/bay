@@ -110,4 +110,15 @@ class BayTest extends \PHPUnit_Framework_TestCase {
 	}
 
 	//--------------------------------------------------------------------
+
+	public function testDisplayRendersWithStaticMethods()
+	{
+		$bay = new Bay();
+		$params = 'one=two,three=four';
+		$expected = ['one' => 'two', 'three' => 'four'];
+
+		$this->assertEquals($expected, $bay->display('\SampleClass::staticEcho', $params));
+	}
+
+	//--------------------------------------------------------------------
 }

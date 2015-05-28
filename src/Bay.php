@@ -27,6 +27,11 @@ class Bay {
 			throw new \InvalidArgumentException("{$class}::{$method} is not a valid method.");
 		}
 
+		if ($this->isStaticMethod($instance, $method))
+		{
+			return $instance::{$method}( $this->prepareParams($params) );
+		}
+
 		return $instance->{$method}( $this->prepareParams($params) );
 	}
 
@@ -125,6 +130,23 @@ class Bay {
 		}
 
 		return $params;
+	}
+
+	//--------------------------------------------------------------------
+
+	/**
+	 * Quick check for if a class method is static.
+	 *
+	 * @param $class
+	 * @param $method
+	 *
+	 * @return mixed
+	 */
+	protected function isStaticMethod($class, $method)
+	{
+		$mirror = new \ReflectionMethod($class, $method);
+
+		return $mirror->isStatic();
 	}
 
 	//--------------------------------------------------------------------
