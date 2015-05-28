@@ -8,6 +8,26 @@
 class Bay {
 
 	/**
+	 * Instance of our customized class loader.
+	 *
+	 * @var LibraryFinderInterface|null
+	 */
+	protected $finder = null;
+
+	//--------------------------------------------------------------------
+
+	public function __construct(LibraryFinderInterface $finder=null)
+	{
+	    if (is_object($finder))
+	    {
+		    $this->finder = $finder;
+	    }
+	}
+
+	//--------------------------------------------------------------------
+
+
+	/**
 	 * The primary method used. Will attempt to locate the library, run
 	 * the requested method, and return the rendered HTML.
 	 *
@@ -54,6 +74,8 @@ class Bay {
 	 */
 	public function determineClass($library)
 	{
+		$found = false;
+
 		// We don't want to actually call static methods
 		// by default, so convert any double colons.
 		$library = str_replace('::', ':', $library);
@@ -66,6 +88,22 @@ class Bay {
 		}
 
 		if (! class_exists($class, true))
+		{
+			// Try the Finder to see if it can find it...
+			if (! is_null($this->finder))
+			{
+				if ($this->finder->find($class))
+				{
+					$found = true;
+				}
+			}
+		}
+		else
+		{
+			$found = true;
+		}
+
+		if (! $found)
 		{
 			throw new \InvalidArgumentException('Unable to locate class '. $class .', provided to Bay::display().');
 		}
