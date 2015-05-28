@@ -65,6 +65,16 @@ The parameters can be separated by either spaces (as shown) or by commas, depend
 	$bay->display("\Blog\Posts::recentPosts", ['limit' => 5, 'offset' => 0] );
 	
 
+## Custom Loaders
 
+Bay supports the use of custom loaders in case you need to implement one specifically for your framework. These are simple classes that are only resonsible for locating and loading the class into memory. It must implement the `Myth\Bay\LibraryFinderInterface` which only has a single method: `find( $class )`. 
+
+One has been provided for [CodeIgniter 3](http://codeigniter.com) that can be used as an example if needed. 
+
+To use a custom loader you would pass an instance in as the first parameter when instantiating the Bay class.
+
+	$bay = new Myth\Bay\Bay( new Myth\Bay\CI3Finder() );
+
+Once loaded, this class will be used to locate a class when any other autoloading fails to locate it.
 
 
