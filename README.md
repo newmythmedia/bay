@@ -1,12 +1,11 @@
 # myth:Bay
 
 [![Build Status](https://travis-ci.org/newmythmedia/bay.svg)](https://travis-ci.org/newmythmedia/bay)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/newmythmedia/bay/badges/quality-score.png?b=develop)](https://scrutinizer-ci.com/g/newmythmedia/bay/?branch=develop)
 
 The Bay component provides a simple way to include re-usable content in any `view` or rendered HTML, while keeping the logic in a separate class or module. This makes it simple to implement re-usable "widgets" in your applications, though that term is, perhaps, too grand. 
 
 A common example could be the "Recent Posts" section of a blog - the actual content is derived from the Blog module in a larger application, and appears in a number of places across your application, but you can easily insert it where you want it within the view  layer, instead of loading it in every controller and sending it to the view. 
-
-**NOTE: This library is under initial development. While simple functionality is here, there are a few things left to be implemented, like Caching and a way to locate libraries to use in a framework-agnostic way.**
 
 ## Installation
 Installation is handled through [Composer](https://getcomposer.org/) as [myth/bay](#).
@@ -76,5 +75,23 @@ To use a custom loader you would pass an instance in as the first parameter when
 	$bay = new Myth\Bay\Bay( new Myth\Bay\CI3Finder() );
 
 Once loaded, this class will be used to locate a class when any other autoloading fails to locate it.
+
+
+## Caching Results
+
+Bays support caching the rendered output so that you never have to hit the original class (or even autoload it) for better performance in many cases. You tell it you want it to be cached by providing a little bit of extra information in the `display()` call. 
+
+The third (optional) parameter to the `display` method is the name the cache should be stored as. If this is not provided, one will be built for you based on the class name, the method name, and an md5 hash of the params array. The fourth parameter is the number of **minutes** the cache should be stored for.
+
+	$bay->display("\Blog\Posts::recentPosts", "limit=5 offset=0", 'some-cache-key', 15);
+
+This example would cache the results under the key `some-cache-key` and store it for 15 minutes. After the 15 minutes is up, the cache would be built again, automatically. The default TTL time is 0 minutes. Be sure to check this behavior with your cach engine of choice. 
+
+### Providing A Cache Engine
+In order for Bays to work in a framework-agnostic manner, we require a framework-integration library for the cache, much like what is used for the custom class loader, above. These classes must extend `Myth\Bay\CacheInterface` and must implement two methods: `get($key)` and `set($key, $content, $ttl)`. A CodeIgniter 3 integration has been provided.
+
+This integration class must be provided during class construction as the second parameter.
+
+	$bay = new Myth\Bay\Bay( null, new Myth\Bay\CI3Cache() );
 
 
