@@ -10,6 +10,8 @@ A common example could be the "Recent Posts" section of a blog - the actual cont
 ## Installation
 Installation is handled through [Composer](https://getcomposer.org/) as [myth/bay](#).
 
+More information can be found in the [wiki](https://github.com/newmythmedia/bay/wiki)
+
 ## General Usage
 
 Bays have only one real requirement: You must have a class that is either already loaded, or can be autoloaded, with a function that returns a string. There are a couple of finer points to consider, but that is the basics that are needed. 
