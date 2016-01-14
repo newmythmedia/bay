@@ -8,7 +8,7 @@ class CI3Cache implements CacheInterface {
 
 	public function __construct()
 	{
-	    $this->ci =& get_instance();
+		$this->ci =& get_instance();
 	}
 
 	//--------------------------------------------------------------------
@@ -53,7 +53,7 @@ class CI3Cache implements CacheInterface {
 			return true;
 		}
 
-		return $this->ci->cache->set($key, $content, $ttl * 60);
+		return $this->ci->cache->save($key, $content, $ttl * 60);
 	}
 
 	//--------------------------------------------------------------------
