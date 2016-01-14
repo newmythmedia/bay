@@ -25,10 +25,10 @@ class Bay {
 
 	public function __construct(LibraryFinderInterface $finder=null, CacheInterface $cache=null)
 	{
-	    if (is_object($finder))
-	    {
-		    $this->finder = $finder;
-	    }
+		if (is_object($finder))
+		{
+			$this->finder = $finder;
+		}
 
 		if (is_object($cache))
 		{
@@ -80,7 +80,7 @@ class Bay {
 		}
 
 		// Can we cache it?
-		if (! empty($this->cache))
+		if (! empty($this->cache) && $cache_ttl !== 0)
 		{
 			$this->cache->set($cache_name, $output, $cache_ttl);
 		}
@@ -166,34 +166,34 @@ class Bay {
 			return null;
 		}
 
-	    if (is_string($params))
-	    {
-		    if (empty($params))
-		    {
-			    return null;
-		    }
+		if (is_string($params))
+		{
+			if (empty($params))
+			{
+				return null;
+			}
 
-		    $new_params = [ ];
+			$new_params = [ ];
 
-		    $separator = ' ';
-		    if (strpos($params, ',') !== false)
-		    {
-			    $separator = ',';
-		    }
+			$separator = ' ';
+			if (strpos($params, ',') !== false)
+			{
+				$separator = ',';
+			}
 
-		    $params = explode($separator, $params);
-		    unset($separator);
+			$params = explode($separator, $params);
+			unset($separator);
 
-		    foreach ($params as $p)
-		    {
-			    list($key, $val) = explode('=', $p);
+			foreach ($params as $p)
+			{
+				list($key, $val) = explode('=', $p);
 
-			    $new_params[ trim($key) ] = trim($val, ', ');
-		    }
+				$new_params[ trim($key) ] = trim($val, ', ');
+			}
 
-		    $params = $new_params;
-		    unset($new_params);
-	    }
+			$params = $new_params;
+			unset($new_params);
+		}
 
 		if (is_array($params) && !count($params))
 		{
