@@ -10,24 +10,30 @@ class SampleClass {
 
 	public function hello()
 	{
-	    return 'Hello';
+		return 'Hello';
 	}
 
 	//--------------------------------------------------------------------
 
 	public function echobox($params)
 	{
-        return $params;
+		return $params;
 	}
 
 	//--------------------------------------------------------------------
 
 	public static function staticEcho($params)
 	{
-	    return $params;
+		return $params;
 	}
 
 	//--------------------------------------------------------------------
 
+	public static function multipleParams($a, $b, $c)
+	{
+		return $a.$b.$c;
+	}
+
+	//--------------------------------------------------------------------
 
 }
