@@ -23,7 +23,7 @@ class Bay {
 
 	//--------------------------------------------------------------------
 
-	public function __construct(LibraryFinderInterface $finder=null, CacheInterface $cache=null)
+	public function __construct(LibraryFinderInterface $finder = null, CacheInterface $cache = null)
 	{
 		if (is_object($finder))
 		{
@@ -70,13 +70,56 @@ class Bay {
 			throw new \InvalidArgumentException("{$class}::{$method} is not a valid method.");
 		}
 
-		if ($this->isStaticMethod($instance, $method))
+		$params_array = $this->prepareParams($params);
+		$ref_method = new \ReflectionMethod($instance, $method);
+		$num_of_params = $ref_method->getNumberOfParameters();
+		$ref_params = $ref_method->getParameters();
+
+		if ($num_of_params === 0)
 		{
-			$output = $instance::{$method}( $this->prepareParams($params) );
+			if ($params_array !== null)
+			{
+				throw new \InvalidArgumentException("{$class}::{$method} has no params.");
+			}
+
+			$output = $instance->{$method}();
+		}
+		elseif (
+			($num_of_params === 1)
+			&& (
+				(! array_key_exists($ref_params[0]->name, $params_array))
+				|| (
+					array_key_exists($ref_params[0]->name, $params_array)
+					&& count($params_array) !== 1
+				)
+			)
+		)
+		{
+			$output = $instance->{$method}($params_array);
 		}
 		else
 		{
-			$output = $instance->{$method}($this->prepareParams($params));
+			$fire_args = [];
+			$method_params = [];
+
+			foreach($ref_params as $arg)
+			{
+				$method_params[$arg->name] = true;
+				if (array_key_exists($arg->name, $params_array))
+				{
+					$fire_args[$arg->name] = $params_array[$arg->name];
+				}
+			}
+
+			foreach ($params_array as $key => $val)
+			{
+				if (! isset($method_params[$key]))
+				{
+					throw new \InvalidArgumentException("{$key} is not a valid param name.");
+				}
+			}
+
+			$output = call_user_func_array([$instance, $method], $fire_args);
 		}
 
 		// Can we cache it?
@@ -204,23 +247,5 @@ class Bay {
 	}
 
 	//--------------------------------------------------------------------
-
-	/**
-	 * Quick check for if a class method is static.
-	 *
-	 * @param $class
-	 * @param $method
-	 *
-	 * @return mixed
-	 */
-	protected function isStaticMethod($class, $method)
-	{
-		$mirror = new \ReflectionMethod($class, $method);
-
-		return $mirror->isStatic();
-	}
-
-	//--------------------------------------------------------------------
-
 
 }

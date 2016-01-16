@@ -100,11 +100,45 @@ class BayTest extends \PHPUnit_Framework_TestCase {
 
 	//--------------------------------------------------------------------
 
+	/**
+	 * @expectedException InvalidArgumentException
+	 * @expectedExceptionMessage \SampleClass::hello has no params.
+	 */
+	public function testDisplayRendersWithInvalidParam()
+	{
+		$bay = new Bay();
+		$bay->display('\SampleClass::hello', 'one=two');
+	}
+
+	//--------------------------------------------------------------------
+
 	public function testDisplayRendersWithValidParamString()
 	{
 		$bay = new Bay();
 		$params = 'one=two,three=four';
 		$expected = ['one' => 'two', 'three' => 'four'];
+
+		$this->assertEquals($expected, $bay->display('\SampleClass::echobox', $params));
+	}
+
+	//--------------------------------------------------------------------
+
+	public function testDisplayRendersWithValidOneSameNameParamString()
+	{
+		$bay = new Bay();
+		$params = 'params=two';
+		$expected = 'two';
+
+		$this->assertEquals($expected, $bay->display('\SampleClass::echobox', $params));
+	}
+
+	//--------------------------------------------------------------------
+
+	public function testDisplayRendersWithValidSameNameParam()
+	{
+		$bay = new Bay();
+		$params = ['params' => 'one', 'another' => 'two'];
+		$expected = $params;
 
 		$this->assertEquals($expected, $bay->display('\SampleClass::echobox', $params));
 	}
@@ -118,6 +152,52 @@ class BayTest extends \PHPUnit_Framework_TestCase {
 		$expected = ['one' => 'two', 'three' => 'four'];
 
 		$this->assertEquals($expected, $bay->display('\SampleClass::staticEcho', $params));
+	}
+
+	//--------------------------------------------------------------------
+
+	public function testDisplayRendersWithValidMultipleParamString()
+	{
+		$bay = new Bay();
+		$params = 'a=x b=y c=z';
+		$expected = 'xyz';
+
+		$this->assertEquals($expected, $bay->display('\SampleClass::multipleParams', $params));
+	}
+
+	//--------------------------------------------------------------------
+
+	public function testDisplayRendersWithValidMultipleParamArray()
+	{
+		$bay = new Bay();
+		$params = ['a' => 'x', 'b' => 'y', 'c' => 'z'];
+		$expected = 'xyz';
+
+		$this->assertEquals($expected, $bay->display('\SampleClass::multipleParams', $params));
+	}
+
+	//--------------------------------------------------------------------
+
+	public function testDisplayRendersWithValidMultipleParamArrayAnotherOrder()
+	{
+		$bay = new Bay();
+		$params = ['c' => 'z', 'a' => 'x', 'b' => 'y'];
+		$expected = 'xyz';
+
+		$this->assertEquals($expected, $bay->display('\SampleClass::multipleParams', $params));
+	}
+
+	//--------------------------------------------------------------------
+
+	/**
+	 * @expectedException InvalidArgumentException
+	 * @expectedExceptionMessage bad is not a valid param name.
+	 */
+	public function testDisplayRendersWithInvalidMultipleParamArray()
+	{
+		$bay = new Bay();
+		$params = ['a' => 'x', 'b' => 'y', 'bad' => 'z'];
+		$bay->display('\SampleClass::multipleParams', $params);
 	}
 
 	//--------------------------------------------------------------------
