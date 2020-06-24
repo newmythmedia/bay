@@ -171,6 +171,9 @@ class Bay {
 				if ($this->finder->find($class))
 				{
 					$found = true;
+					// remove path from class name (sometimes it is located in a sub-directory)
+					$class_path = explode('/', $class);
+					$class = end($class_path);
 				}
 			}
 		}
